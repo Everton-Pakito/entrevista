@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrevista Motorista</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="padrao_css_sistema.css">
+</head>
+<body>
+
+<div class="container fade-in">
+    <div class="header">
+        <h1>Roteiro de Entrevista - Motorista</h1>
+        <p>Formulário Digital com Checklist</p>
+    </div>
+
+    <div class="content">
+        <form id="formEntrevista">
+
+            <!-- Dados do Candidato -->
+            <div class="section info">
+                <h2>Dados do Candidato</h2>
+                <div class="form-group">
+                    <div class="input-group">
+                        <label>Nome</label>
+                        <input type="text" name="nome" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Data da Entrevista</label>
+                        <input type="date" name="data" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Entrevistador</label>
+                        <input type="text" name="entrevistador" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experiência -->
+            <div class="section">
+                <h2>Experiência</h2>
+
+                <!-- Tipos de veículos -->
+                <div class="form-group">
+                    <div class="input-group w-100">
+                        <label>1. Experiência e tipos de veículos</label>
+                        <div class="item-list">
+                            <label><input type="checkbox" name="veiculos" value="Caminhão Toco"> Caminhão Toco</label>
+                            <label><input type="checkbox" name="veiculos" value="Caminhão Truque"> Caminhão Truque</label>
+                            <label><input type="checkbox" name="veiculos" value="Micro-Ônibus"> Micro-Ônibus</label>
+                            <label><input type="checkbox" name="veiculos" value="Ônibus Rural"> Ônibus Rural</label>
+                            <label><input type="checkbox" name="veiculos" value="Ônibus Rodoviário"> Ônibus Rodoviário</label>
+                            <label><input type="checkbox" name="veiculos" value="Carreta"> Carreta</label>
+                            <label><input type="checkbox" name="veiculos" value="Bi-Trem"> Bi-Trem</label>
+                            <label><input type="checkbox" name="veiculos" value="Rodo-Trem"> Rodo-Trem</label>
+                            <label>
+                                <input type="checkbox" id="chkOutros"> Outros:
+                                <input type="text" id="txtOutros" name="veiculos" placeholder="Especifique" disabled>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rota mais desafiadora -->
+                <div class="form-group">
+                    <div class="input-group w-100">
+                        <label>2. Rota mais desafiadora</label>
+                        <textarea name="exp3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentação -->
+            <div class="section success">
+                <h2>Documentação</h2>
+                <div class="form-group">
+                    <div class="input-group">
+                        <label>Categoria CNH</label>
+                        <input type="text" name="cnh">
+                    </div>
+                    <div class="input-group">
+                        <label>Cursos complementares</label>
+                        <textarea name="cursos"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checklist de Avaliação -->
+            <div class="section warning">
+                <h2>Checklist de Avaliação</h2>
+                <table class="table">
+                    <tr>
+                        <th>Critério</th>
+                        <th>Nota (0-5)</th>
+                    </tr>
+                    <tr><td>Experiência</td><td><input type="number" min="0" max="5" name="nota1"></td></tr>
+                    <tr><td>Conhecimento Técnico</td><td><input type="number" min="0" max="5" name="nota2"></td></tr>
+                    <tr><td>Segurança</td><td><input type="number" min="0" max="5" name="nota3"></td></tr>
+                    <tr><td>Comportamento</td><td><input type="number" min="0" max="5" name="nota4"></td></tr>
+                    <tr><td>Disponibilidade</td><td><input type="number" min="0" max="5" name="nota5"></td></tr>
+                    <tr><td>Comunicação</td><td><input type="number" min="0" max="5" name="nota6"></td></tr>
+                    <tr><th>Total</th><th id="totalNota">0</th></tr>
+                </table>
+            </div>
+
+            <!-- Parecer Final -->
+            <div class="section error">
+                <h2>Parecer Final</h2>
+                <div class="form-group">
+                    <div class="input-group w-100">
+                        <label>Observações e conclusão</label>
+                        <textarea name="parecer"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group flex flex-center">
+                <button type="button" class="btn btn-success" onclick="gerarPDF()">💾 Salvar como PDF</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// Soma automática do checklist
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', () => {
+        let total = 0;
+        document.querySelectorAll('input[type="number"]').forEach(n => {
+            total += parseInt(n.value) || 0;
+        });
+        document.getElementById('totalNota').innerText = total;
+    });
+});
+
+// Exportar para PDF
+function gerarPDF() {
+    const elemento = document.getElementById("formEntrevista");
+    html2pdf().from(elemento).save("entrevista_motorista.pdf");
+}
+
+// Habilitar campo "Outros" somente quando marcado
+document.getElementById("chkOutros").addEventListener("change", function(){
+    document.getElementById("txtOutros").disabled = !this.checked;
+});
+
+// PWA
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+}
+</script>
+
+</body>
+</html>
